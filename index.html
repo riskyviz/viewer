@@ -1,0 +1,50 @@
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src='https://unpkg.com/@turf/turf/turf.min.js'></script>
+
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <title id="title"></title>
+    <link rel = "icon" href =
+            "img/marker.svg"
+          type = "image/x-icon">
+     <style>
+      body {
+        background-image: url('img/background.png');
+      }
+     </style>
+  </head>
+  <body onload="configure();boot()">
+    <nav class="navbar navbar-expand-md justify-content-between">
+      <a class="navbar-brand"><img src="img/navbrand.svg" alt=""></a>
+      <form class="mx-2 my-auto d-inline w-100" id="searchForm">
+        <div class="input-group">
+          <input type="text" id="selector" class="form-control" placeholder="Search for your town or postcode...">
+          <span class="input-group-append">
+              <button class="btn btn-outline-secondary border border-warning" type="button" id="search" onclick="doSearch()">
+                  <i class="fa fa-search"></i>
+              </button>
+          </span>
+        </div>
+      </form>
+    </nav>
+
+    <div class="hero-image">
+      <div class="hero-text">
+        <h1 id="headline"></h1>
+        <button type="button" id="setLocation" class="btn btn-warning btn-sm" onclick="locate()">Set Location</button>
+      </div>
+    </div>
+    <script type="text/javascript" src="js/configure.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="js/location_search.js"></script>
+  </body>
+</html>

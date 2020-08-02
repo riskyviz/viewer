@@ -1,0 +1,15 @@
+{
+  "title": "Risk Finder",
+  "headline": "Find out the risk in your area...",
+  "explanation_html": "The risk levels are estimated using???.\n<a href=\"https://example.org\"> Learn more.</a>",
+  "risk-thresholds": {
+    "low-medium": 0.71,
+    "medium-high": 3.57
+  },
+  "advice_by_risk": {
+    "high": "Advice for <b>High Risk Areas</b>...",
+    "medium": "Advice for <b>Medium Risk Areas</b>...",
+    "low": "config/low_risk.html"
+  },
+  "info_area_html": "config/info.html"
+}

@@ -1,0 +1,287 @@
+body, html {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.card{
+    width: 90%;
+    text-align: left;
+    background: white;
+    color: black;
+    margin: 2% auto; /* Added */
+    margin-bottom: 10px; /* Added */
+
+}
+
+.card-title{
+    text-align: left;
+}
+
+#summary{
+    text-align: left;
+    padding-bottom: 0;
+    background-color: #f8f8f8;
+}
+#summary-text{
+    padding-left: 4%;
+    padding-right: 4%;
+    padding-bottom: 0;
+    font-family: "Roboto";
+}
+
+#summary-text em{
+    font-weight: bold;
+    font-style: normal;
+    font-family: "Source Code Pro";
+}
+
+.list-group{
+    width: 100%;
+}
+
+
+nav{
+    background-color: #193c6d;
+    filter: progid: DXImageTransform.Microsoft.gradient(gradientType=1, startColorstr='#003073', endColorstr='#029797');
+    background-image: url(//img.alicdn.com/tps/TB1d.u8MXXXXXXuXFXXXXXXXXXX-1900-790.jpg);
+    background-size: 100%;
+    background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(0, #003073), color-stop(100%, #029797));
+    background-image: -webkit-linear-gradient(135deg, #003073, #029797);
+    background-image: -moz-linear-gradient(45deg, #003073, #029797);
+    background-image: -ms-linear-gradient(45deg, #003073 0, #029797 100%);
+    background-image: -o-linear-gradient(45deg, #003073, #029797);
+    background-image: linear-gradient(135deg, #003073, #029797);
+    text-align: left;
+    color: white;
+}
+
+body{
+    background-color: white;
+}
+
+.navbar{
+    padding-bottom: 5px;
+    padding-left: 2vw;
+    padding-right: 2vw;
+}
+
+#result{
+    font-family: "Roboto";
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 5px;
+}
+.navbar-brand{
+    width: 100%;
+}
+
+.navbar-brand>a>img{
+    height: 60px;
+    overflow: visible;
+}
+
+.form-control{
+    font-size: 0.8em;
+    border: 0 solid gold;
+    box-shadow: none;
+    background-color: rgba(255,255,255,0.3);
+    color: rgba(0,0,0,1);
+    font-weight: lighter;
+}
+
+.form-control:focus{
+    font-size: 0.8em;
+    box-shadow: none;
+    border: none;
+    background-color: rgba(255,255,255,0.7);
+    color: rgba(0,0,0,1);
+    font-weight: lighter;
+}
+
+.btn{
+    font-size: small;
+    color: gold;
+    border-color: gold;
+}
+
+.btn:hover{
+    background-color: gold;
+    color: white;
+    border-color: gold;
+    box-shadow: none;
+}
+
+.form-control::-webkit-input-placeholder {
+    color: black;
+    font-weight: lighter;
+}
+
+@media (max-width: 766px) {
+    .navbar-brand{
+        display: inline-block;
+        width: 100%;
+        margin: 2px auto;
+        float: none;
+        text-align: center;
+    }
+
+}
+
+#mapid {
+    margin-top: 0;
+    padding: 0;
+    margin-bottom: 0;
+    height:40vh;
+    width:100%;
+}
+.container-fluid{
+    margin: 0;
+    padding:0;
+    width: 100%;
+}
+
+.summaryPane{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #e3e3e3;
+}
+
+.govAdvice{
+
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+
+}
+
+.flex-fill {
+    flex:1;
+}
+
+.bg-gray {
+    background: rgb(255,255,255);
+}
+.bg-blue {
+    background: rgb(50,101,196);
+}
+.bg-red {
+    background: rgb(196,50,53);
+}
+
+#top-left{
+    padding-top: 10px;
+    background: #80C904;
+}
+
+#top-left h1{
+
+    height:50px;
+    text-align: center;
+    color: #003073;
+}
+
+#bottom-left{
+    background: #e9e9e9;
+}
+
+#riskScale{
+    text-align: center;
+    max-height: 25px;
+    margin-bottom: 5%;
+}
+
+#scaleBox{
+    padding-top: 10px;
+    text-align: center;
+
+}
+
+#colorBar{
+    text-align: center;
+}
+
+.card-body{
+    padding: 20px;
+}
+.card-header{
+    background-color: #f8f8f8;
+}
+.nav-pills{
+    font-family: "Source Code Pro";
+    font-weight: bold;
+}
+
+#riskStripesDesc h3{
+    font-weight: bold;
+    font-family: Roboto;
+}
+
+#riskStripesDesc p{
+    font-family: Roboto;
+}
+
+#govAdvice{
+    list-style-type: none;
+    font-size: 15px;
+    padding-left: 0;
+}
+#symptoms{
+    list-style-type: none;
+    font-size: 15px;
+    padding-left: 0;
+}
+
+#action{
+    padding-left: 20px;
+    font-size: 15px;
+}
+#test{
+    text-align: center;
+    font-size: 30px;
+    text-decoration: underline;
+}
+
+#right_main ul#mainAdvice{
+    height:250px;
+    width:350px;
+    overflow:hidden;
+    margin-left:25px;
+}
+
+#mainAdvice li#gov{
+    background: url("img/govuk-icon.svg") no-repeat 0 center;
+    background-size: 35px 35px;
+    padding-left: 45px;
+}
+
+#mainAdvice li#advice1{
+    background: url("img/face-mask.svg") no-repeat 0 center;
+    background-size: 35px 35px;
+    padding-left: 45px;
+}
+
+#mainAdvice li#advice2{
+    background: url("img/train-public-transport.svg") no-repeat 0 center;
+    background-size: 35px 35px;
+    padding-left: 45px;
+}
+
+#mainAdvice li#advice3{
+    background: url("img/social-distancing.svg") no-repeat 0 center;
+    background-size: 35px 35px;
+    padding-left: 45px;
+}
+
+#date{
+    text-align: center;
+    font-weight: lighter;
+    font-family: "Source Code Pro";
+    font-size: 15px;
+    color: #7e7e7e;
+    margin-bottom: 5px;
+}
