@@ -1,7 +1,8 @@
 async function boot() {
 
-    var geojson = await fetch("data/data.geojson");
+    var geojson = await fetch("data/output.geojson");
     var geodata = await geojson.json();
+    var times = geodata["properties"]["times"];
 
     function getColor(d) {
         return d >= configuration["risk-thresholds"]["medium-high"] ? '#ff0034' :
@@ -12,7 +13,7 @@ async function boot() {
 
     function style(feature) {
         return {
-            fillColor: getColor(feature.properties.score),
+            fillColor: getColor(feature.properties.scores[feature.properties.scores.length-1]),
             weight: 0.2,
             opacity: 1,
             color: 'black',
@@ -73,8 +74,9 @@ async function boot() {
         for (var i = 0, len = features.length; i < len; i++) {
             var isInside = turf.inside(point1,features[i]);
             if(isInside) {
-                var place = features[i].properties.long_name;
-                var score = features[i].properties.score;
+                var place = features[i].properties.id;
+                var scores = features[i].properties.scores;
+                var score = scores[scores.length-1];
 
                 sessionStorage.setItem("location", place);
                 sessionStorage.setItem("score", score);
@@ -121,12 +123,12 @@ async function boot() {
                         }
                     }
                 }
-                var cb = createColourBar(features[i].properties,thresholds["low-medium"], thresholds["medium-high"], 250, 250);
+                var cb = createColourBar(features[i].properties.scores,times,thresholds["low-medium"], thresholds["medium-high"], 250, 250);
                 document.getElementById("colorBar").innerHTML="";
                 document.getElementById("colorBar").appendChild(cb);
                 $('#myChart').remove();
                 $('#chartFather').append('<canvas id="myChart"></canvas>');
-                createChart(features[i].properties);
+                createChart(features[i].properties.scores,times);
             }
         }
     }
@@ -184,23 +186,25 @@ async function boot() {
      * Create a colour bar for the score history and return its HTML element,
      * ready to be added to the document
      *
-     * @param score_obj the details of a score
+     * @param scores array of scores
+     * @param times array of Date objects
      * @param threshold1 threshold between low and medium scores
      * @param threshold2 threshold between medium and high scores
      * @param height height of the bar (suggest 40 or 50) in pixels
      * @param width width of the bar, suggest at least 300
      * @returns {HTMLCanvasElement}
      */
-    function createColourBar(score_obj,threshold1,threshold2,height,width) {
-        var scores = [score_obj["score"]].concat(score_obj["history_date_desc"]);
+    function createColourBar(scores,times,threshold1,threshold2,height,width) {
 
         // work out the end date (with the latest score) ...
-        var endDate = parseDate(score_obj["LatestDate"]);
+        var endDate = parseDate(times[times.length-1]);
+        var startDate = parseDate(times[0]);
 
-        // and the start date in the history
-        var startDate = new Date();
+        cscores = [];
+        for(var idx=scores.length-1; idx>=0; idx--) {
+            cscores.push(scores[idx]);
+        }
 
-        startDate.setDate(endDate.getDate()-(scores.length-1));
         document.getElementById("endDate").textContent = formatDate(endDate);
         document.getElementById("startDate").textContent = formatDate(startDate);
         document.getElementById("date").textContent = formatDate(endDate);
@@ -219,61 +223,11 @@ async function boot() {
         var barheight = height-25;
 
         // draw the coloured rectangles
-        var count = scores.length;
+        var count = cscores.length;
         var step = barwidth / count;
         for(var idx=0; idx < count; idx+=1) {
-            var score = scores[idx];
-            var colour = null;
-            if (score >= 0 && score <= threshold1) {
-                if(score <= (2*threshold1)/10){
-                    colour = `rgb(128,201,4)`;
-                }
-                else if(score <= (4*threshold1)/10){
-                    colour = `rgb(149,203,3)`;
-                }
-                else if(score <= (6*threshold1)/10){
-                    colour = `rgb(170,204,3)`;
-                }
-                else if(score <= (8*threshold1)/10){
-                    colour = `rgb(192,206,2)`;
-                }
-                else if(score <= (10*threshold1)/10){
-                    colour = `rgb(213,208,1)`;
-                }
-            } else if (score > threshold1 && score <= threshold2) {
-                if(score <= (threshold2)/10){
-                    colour = `rgb(244,210,0)`;
-                }
-                else if(score <= (2*threshold2)/10){
-                    colour = `rgb(255,211,0)`;
-                }
-                else if(score <= (3*threshold2)/10){
-                    colour = `rgb(255,193,4)`;
-                }
-                else if(score <= (4*threshold2)/10){
-                    colour = `rgb(255,176,9)`;
-                }
-                else if(score <= (5*threshold2)/10){
-                    colour = `rgb(255,158,13)`;
-                }
-                else if(score <= (6*threshold2)/10){
-                    colour = `rgb(255,141,17)`;
-                }
-                else if(score <= (7*threshold2)/10){
-                    colour = `rgb(255,123,22)`;
-                }
-                else if(score <= (8*threshold2)/10){
-                    colour = `rgb(255,106,26)`;
-                }
-                else if(score <= (9*threshold2)/10){
-                    colour = `rgb(255,88,30)`;
-                }
-                else if(score <= (10*threshold2)/10){
-                    colour = `rgb(255,53,39)`;
-                }
-            } else if (score > threshold2) {
-                colour = `rgb(255,0,52)`;
-            }
+            var score = cscores[idx];
+            var colour = getColor(score);
             if (colour != null) {
                 ctx.fillStyle = colour;
                 ctx.globalCompositeOperation = "lighter"
@@ -341,16 +295,14 @@ async function boot() {
         return dates;
     };
 
-    function createChart(data){
+    function createChart(scores,times){
         var cht = document.getElementById('myChart').getContext('2d');
         cht.height = 500;
-        var scores = [data["score"]].concat(data["history_date_desc"]);
+
         // work out the end date (with the latest score) ...
-        var endDate = parseDate(data["LatestDate"]);
+        var endDate = parseDate(times[times.length-1]);
         // and the start date in the history
-        var startDate = new Date();
-        var dateOffsetMS = (24*60*60*1000) * (scores.length-1);
-        startDate.setTime(endDate.getTime()-dateOffsetMS);
+        var startDate = parseDate(times[0]);
         var dateArray = []
         dateArray = getDates(startDate,endDate);
 
@@ -366,7 +318,7 @@ async function boot() {
                     borderColor: 'rgb(87,164,255)',
                     borderWidth: 3.5,
                     backgroundColor: 'rgba(255,255,255,0)',
-                    data: scores.reverse(),
+                    data: scores,
                     fill: false,
                     pointRadius: 1.5,
                     pointHoverRadius: 3.5,
@@ -410,7 +362,9 @@ async function boot() {
                         },
                         display: true,
                         ticks:{
-                            fontFamily: 'Source Code Pro'
+                            fontFamily: 'Source Code Pro',
+                            min: 0,
+                            max: 9
                         }
                     }, {
                         position: 'right',

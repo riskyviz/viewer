@@ -1,14 +1,14 @@
 {
   "title": "Risk Finder",
-  "headline": "Find out the risk in your area...",
-  "explanation_html": "The risk levels are estimated using???.\n<a href=\"https://example.org\"> Learn more.</a>",
+  "headline": "Find out the risk from air pollution in your area...",
+  "explanation_html": "The risk levels are estimated using the UK Met Office AQUM (Air Quality Unified Model).\n<a href=\"https://metdatasa.blob.core.windows.net/covid19-response/README_data_air_quality.html\"> Learn more.</a>",
   "risk-thresholds": {
-    "low-medium": 0.71,
-    "medium-high": 3.57
+    "low-medium": 3.5,
+    "medium-high": 6.5
   },
   "advice_by_risk": {
-    "high": "Advice for <b>High Risk Areas</b>...",
-    "medium": "Advice for <b>Medium Risk Areas</b>...",
+    "high": "config/high_risk.html",
+    "medium": "config/medium_risk.html",
     "low": "config/low_risk.html"
   },
   "info_area_html": "config/info.html"

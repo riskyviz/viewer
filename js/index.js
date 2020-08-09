@@ -12,7 +12,7 @@ var geodata = {};
 
 
 async function boot() {
-    var geojson = await fetch("data/data.geojson");
+    var geojson = await fetch("data/output.geojson");
     geodata = await geojson.json();
 }
 
@@ -31,14 +31,12 @@ function locate() {
 
             for (var i = 0, len = features.length; i < len; i++) {
                 var isInside = turf.inside(point1,features[i]);
-
                 if(isInside) {
-                    var place = features[i].properties.long_name;
-                    var score = features[i].properties.score;
-
+                    var place = features[i].properties.id;
+                    var scores = features[i].properties.scores;
+                    var score = scores[scores.length-1];
                     sessionStorage.setItem("location", place);
                     sessionStorage.setItem("score", score);
-
                     window.location.assign("local.html");
                 }
             }

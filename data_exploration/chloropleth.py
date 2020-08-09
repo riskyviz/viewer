@@ -42,8 +42,6 @@ risk.setOpacity(0.5)
 risk.setInfo("","","")
 m.add(risk)
 
-
-
 gi = Geoimport("nuts1.json",polygon_style=lambda p:{"fill":"none"}) # https://github.com/martinjc/UK-GeoJSON/blob/master/json/eurostat/ew/nuts1.json
 m.add(gi)
 
