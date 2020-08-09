@@ -3,9 +3,11 @@
 Simple and re-usable web app for viewing geo-localized risk and environmental data 
 requiring only a static web server.
 
-Based on the [riskCOVID prototype web app] (https://github.com/riskyviz/webapp/)
+Code based on the (riskCOVID prototype webapp repo)[https://github.com/riskyviz/webapp/]
 
-The view is pre-loaded with UK (London area) air quality data for January 2020.  
+The viewer is currently pre-loaded with UK (London area) air quality data for January 1st - 7th 2020.  
+
+Open the viewer hosted by github pages: [https://riskyviz.github.io/viewer/index.html](https://riskyviz.github.io/viewer/index.html)
 
 The data is obtained from the Met Office AQUM (Air Quality Unified Model), for more information see:
 
