@@ -15,6 +15,8 @@ The data is obtained from the Met Office AQUM (Air Quality Unified Model), for m
 
 * https://metdatasa.blob.core.windows.net/covid19-response/README_data_air_quality.html
 
+## Downloading and preparing AQUM data
+
 Data is loaded and converted to `output.geojson` to be loaded and viewed in the web app using:
 
 ```
@@ -33,3 +35,14 @@ pip3 install pyproj
 pip3 install xarray
 pip3 install netcdf4
 ```
+
+## Customising for other applications
+
+Documentation TODO
+
+## Roadmap
+
+* Import advice icons design from the riskCOVID prototype
+* Generate and work with *sharded* geojson files to avoid large data transfers
+* Merge adjacent small area risks for zoomed out map
+* View forecast risk levels as well as current and previous risk levels
