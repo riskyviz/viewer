@@ -36,7 +36,7 @@ def date_to_path(dt):
 
 transformer = Transformer.from_crs("epsg:27700","epsg:4326")
 
-bb_filter = True
+bb_filter = False
 bb_lon_min=-1.489
 bb_lat_min=51.28
 bb_lon_max=0.236
@@ -54,17 +54,71 @@ geojson = {
     "properties": {}
 }
 
+class Shard(object):
+
+    id_counter = 0
+    def __init__(self,base_file_name,min_lat,min_lon,max_lat,max_lon):
+        self.id = Shard.id_counter
+        Shard.id_counter += 1
+        self.min_lat = min_lat
+        self.min_lon = min_lon
+        self.max_lat = max_lat
+        self.max_lon = max_lon
+        self.file_name = "shard%d_"%(self.id)+base_file_name
+
+        self.extent_max_lat = min_lat
+        self.extent_max_lon = min_lon
+
+    def __repr__(self):
+        return "(lat: %f to %f, lon: %f to %f)"%(self.min_lat,self.max_lat,self.min_lon,self.max_lon)
+
+    def includes(self,lon_lat_list):
+        min_lat = min(lat for (_,lat) in lon_lat_list)
+        min_lon = min(lon for (lon,_) in lon_lat_list)
+        return min_lat >= self.min_lat and min_lat < self.max_lat \
+            and min_lon >= self.min_lon and min_lon < self.max_lon
+
+    def add(self,lon_lat_list):
+        max_lat = max(lat for (_, lat) in lon_lat_list)
+        max_lon = max(lon for (lon, _) in lon_lat_list)
+        self.extent_max_lat = max(max_lat,self.extent_max_lat)
+        self.extent_max_lon = max(max_lon, self.extent_max_lon)
+
+    def getExtentLat(self):
+        return (self.min_lat,self.extent_max_lat)
+
+    def getExtentLon(self):
+        return (self.min_lon, self.extent_max_lon)
+
+    def getFileName(self):
+        return self.file_name
+
+    def writeProperties(self,properties):
+        properties["shard_filename"] = self.file_name
+        properties["min_lat"] = self.min_lat
+        properties["max_lat"] = self.extent_max_lat
+        properties["min_lon"] = self.min_lon
+        properties["max_lon"] = self.extent_max_lon
+
+    def getCoordinates(self):
+        return [(self.min_lon,self.min_lat),(self.min_lon,self.extent_max_lat),
+                (self.extent_max_lon,self.extent_max_lat),(self.extent_max_lon,self.min_lat)]
+
 class Converter(object):
 
     def __init__(self):
         pass
 
-    def convert(self,output_file_name):
+    def convert(self,output_file_name, shard_size_degrees=1):
 
         id_counter=0
         dt = start_date
         output_data = {}
         times = []
+        area_min_lat = 90
+        area_max_lat = -90
+        area_min_lon = 180
+        area_max_lon = -180
         while dt < end_date:
             print("Processing",dt)
             times.append(dt.strftime(("%Y-%m-%d")))
@@ -114,6 +168,10 @@ class Converter(object):
                                 "lat": float(mid_lat),
                                 "id": "a%d"%(id_counter)
                             }
+                            area_min_lat = min(area_min_lat, min_lat)
+                            area_max_lat = max(area_max_lat, max_lat)
+                            area_min_lon = min(area_min_lon, min_lon)
+                            area_max_lon = max(area_max_lon, max_lon)
                             id_counter += 1
 
                     if output_data[(x,y)]:
@@ -121,17 +179,44 @@ class Converter(object):
 
             dt += datetime.timedelta(days=1)
 
+        # calculate shard boundaries
+        shards = []
+        lat = area_min_lat
+        while lat <= area_max_lat:
+            lon = area_min_lon
+            while lon <= area_max_lon:
+                shards.append(Shard(output_file_name,lat,lon,lat+shard_size_degrees,lon+shard_size_degrees))
+                lon += shard_size_degrees
+            lat += shard_size_degrees
+
+        print(shards)
+
+        for shard in shards:
+            geojson_out = copy.deepcopy(geojson)
+            geojson_out["properties"]["times"] = times
+            for k in output_data:
+                if output_data[k]:
+                    lon_lats = output_data[k]["bounds"]
+                    if shard.includes(lon_lats):
+                        shard.add(lon_lats)
+                        coords = [[lon, lat] for (lon, lat) in lon_lats]
+                        geojson_feat = copy.deepcopy(geojson_feature)
+                        for property in ["scores", "id", "lon", "lat"]:
+                            geojson_feat["properties"][property] = output_data[k][property]
+                        geojson_feat["geometry"]["coordinates"] = [[coords]]
+                        geojson_out["features"].append(geojson_feat)
+
+            open(shard.getFileName(),"w").write(json.dumps(geojson_out))
 
         geojson_out = copy.deepcopy(geojson)
         geojson_out["properties"]["times"] = times
-        for k in output_data:
-            if output_data[k]:
-                geojson_feat = copy.deepcopy(geojson_feature)
-                for property in ["scores","id","lon","lat"]:
-                    geojson_feat["properties"][property] = output_data[k][property]
-                geojson_feat["geometry"]["coordinates"] = [[[[lat,lon] for (lat,lon) in output_data[k]["bounds"]]]]
-                geojson_out["features"].append(geojson_feat)
-        open(output_file_name,"w").write(json.dumps(geojson_out))
+        for shard in shards:
+            geojson_feat = copy.deepcopy(geojson_feature)
+            shard.writeProperties(geojson_feat["properties"])
+            geojson_feat["geometry"]["coordinates"] = [[shard.getCoordinates()]]
+            geojson_out["features"].append(geojson_feat)
+        open(output_file_name, "w").write(json.dumps(geojson_out))
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

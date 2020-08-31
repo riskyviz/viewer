@@ -17,14 +17,15 @@ The data is obtained from the Met Office AQUM (Air Quality Unified Model), for m
 
 ## Downloading and preparing AQUM data
 
-Data is loaded and converted to `output.geojson` to be loaded and viewed in the web app using:
+Data is loaded and converted to `output.geojson` and a number of shard files (`shardNNN_output.geojson`) to be loaded and viewed in the web app using:
 
 ```
 cd data
-wget https://metdatasa.blob.core.windows.net/covid19-response/metoffice_aqum_hourly/pm2p5/aqum_hourly_pm2p5_20200101.nc
-wget https://metdatasa.blob.core.windows.net/covid19-response/metoffice_aqum_hourly/pm2p5/aqum_hourly_pm2p5_20200102.nc
+wget https://metdatasa.blob.core.windows.net/covid19-response/metoffice_aqum_daily/daqi/aqum_daily_daqi_mean_20200818.nc
+wget https://metdatasa.blob.core.windows.net/covid19-response/metoffice_aqum_daily/daqi/aqum_daily_daqi_mean_20200819.nc
+wget https://metdatasa.blob.core.windows.net/covid19-response/metoffice_aqum_daily/daqi/aqum_daily_daqi_mean_20200820.nc
 ...
-wget https://metdatasa.blob.core.windows.net/covid19-response/metoffice_aqum_hourly/pm2p5/aqum_hourly_pm2p5_20200108.nc
+
 python3 convert.py output.geojson
 ```
 
@@ -42,7 +43,12 @@ Documentation TODO
 
 ## Roadmap
 
+### TODO
+
 * Import advice icons design from the riskCOVID prototype
-* Generate and work with *sharded* geojson files to avoid large data transfers
 * Merge adjacent small area risks for zoomed out map
 * View forecast risk levels as well as current and previous risk levels
+
+### Completed
+
+* Generate and work with *sharded* geojson files to avoid large data transfers

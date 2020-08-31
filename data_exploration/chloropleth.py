@@ -37,14 +37,13 @@ def scoreThreshold(score):
     print(band)
     return band
 
-risk = Chloropleth("../data/output.geojson",valueNameOrFn=lambda p:scoreThreshold(p["scores"][len(p["scores"])-1]),labelNameOrFn=lambda x:"Risk Score",palette=palette, stroke_width=0)
+risk = Chloropleth("../data/shard97_output.geojson",valueNameOrFn=lambda p:scoreThreshold(p["scores"][len(p["scores"])-1]),labelNameOrFn=lambda x:"Risk Score",palette=palette, stroke_width=0)
 risk.setOpacity(0.5)
 risk.setInfo("","","")
 m.add(risk)
 
 gi = Geoimport("nuts1.json",polygon_style=lambda p:{"fill":"none"}) # https://github.com/martinjc/UK-GeoJSON/blob/master/json/eurostat/ew/nuts1.json
 m.add(gi)
-
 
 vs.add(Text("England & Wales Covid Risk Estimates - Sample 18th July 2020"))
 hs.add(m)
