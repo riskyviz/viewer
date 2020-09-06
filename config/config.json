@@ -11,5 +11,17 @@
     "medium": "config/medium_risk.html",
     "low": "config/low_risk.html"
   },
-  "info_area_html": "config/info.html"
+  "info_area_html": "config/info.html",
+  "zoom_levels": {
+    "14": "output14.geojson",
+    "13": "output14.geojson",
+    "12": "output13.geojson",
+    "11": "output12.geojson",
+    "10": "output11.geojson",
+    "9": "output10.geojson",
+    "8": "output9.geojson",
+    "7": "output9.geojson",
+    "6": "output9.geojson",
+    "5": "output9.geojson"
+  }
 }

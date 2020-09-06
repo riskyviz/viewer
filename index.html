@@ -20,13 +20,18 @@
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
 
     <script type="text/javascript" src="js/configure.js"></script>
+    <script type="text/javascript" src="js/chartview.js"></script>
+    <script type="text/javascript" src="js/utils.js"></script>
+    <script type="text/javascript" src="js/model.js"></script>
+    <script type="text/javascript" src="js/view.js"></script>
+    <script type="text/javascript" src="js/controller.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
     <title id="title"></title>
     <link rel="icon" href=
             "img/marker.svg"
           type="image/x-icon">
 </head>
-<body onload="configure();boot()">
+<body onload="boot()">
 <nav class="navbar navbar-expand-md justify-content-between">
     <div class="navbar-brand">
         <img id="geolocate_btn" src="img/navbrand.svg" alt="">
@@ -43,9 +48,16 @@
         </div>
     </form>
 </nav>
-<div id="mapid"></div>
+<!-- <div id="mapid"></div> -->
 <div class="container-fluid">
     <div class="row">
+        <div class="col-xl-6 bg-gray">
+            <div class="card" style="width: 96%;">
+                <div class="card-body">
+                    <div id="mapid"></div>
+                </div>
+            </div>
+        </div>
         <div class="col-xl-6 bg-gray" style="margin-bottom: 0">
             <div class="card" style="width: 96%;">
                 <svg class="bd-placeholder-img card-img-top" width="100%" height="20" xmlns="http://www.w3.org/2000/svg"

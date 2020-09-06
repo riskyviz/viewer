@@ -25,11 +25,12 @@ import argparse
 import json
 import datetime
 import copy
+import os.path
 
 from pyproj import Transformer
 
-start_date = datetime.datetime(2020,1,1)
-end_date = datetime.datetime(2020,1,8)
+start_date = datetime.datetime(2020,8,7)
+end_date = datetime.datetime(2020,8,18)
 
 def date_to_path(dt):
     return dt.strftime("aqum_daily_daqi_mean_%Y%m%d.nc")
@@ -64,7 +65,7 @@ class Shard(object):
         self.min_lon = min_lon
         self.max_lat = max_lat
         self.max_lon = max_lon
-        self.file_name = "shard%d_"%(self.id)+base_file_name
+        self.file_name = base_file_name+"_shard%d.geojson"%(self.id)
 
         self.extent_max_lat = min_lat
         self.extent_max_lon = min_lon
@@ -107,11 +108,9 @@ class Shard(object):
 class Converter(object):
 
     def __init__(self):
-        pass
+        self.id_counter=0
 
-    def convert(self,output_file_name, shard_size_degrees=1):
-
-        id_counter=0
+    def convert(self,output_file_name,shard_size_degrees=1,scale_factor=1):
         dt = start_date
         output_data = {}
         times = []
@@ -119,6 +118,7 @@ class Converter(object):
         area_max_lat = -90
         area_min_lon = 180
         area_max_lon = -180
+        base_file_name = os.path.splitext(output_file_name)[0]
         while dt < end_date:
             print("Processing",dt)
             times.append(dt.strftime(("%Y-%m-%d")))
@@ -129,11 +129,15 @@ class Converter(object):
             #    print(v)
 
             field = "daily_air_quality_index"
+            print(ds[field].shape)
+
+            if scale_factor != 1:
+                ds = ds.coarsen(projection_x_coordinate=scale_factor,projection_y_coordinate=scale_factor,boundary="pad").mean()
 
             field_data = ds.variables[field].data
-
             ycs = ds.coords["projection_y_coordinate"].data
             xcs = ds.coords["projection_x_coordinate"].data
+
             # print(np.min(field_data),np.max(field_data))
             # print(ycs.shape)
             # print(xcs.shape)
@@ -166,13 +170,13 @@ class Converter(object):
                                 "scores": [],
                                 "lon": float(mid_lon),
                                 "lat": float(mid_lat),
-                                "id": "a%d"%(id_counter)
+                                "id": "a%d"%(self.id_counter)
                             }
                             area_min_lat = min(area_min_lat, min_lat)
                             area_max_lat = max(area_max_lat, max_lat)
                             area_min_lon = min(area_min_lon, min_lon)
                             area_max_lon = max(area_max_lon, max_lon)
-                            id_counter += 1
+                            self.id_counter += 1
 
                     if output_data[(x,y)]:
                         output_data[(x,y)]["scores"].append(float(field_data[y,x]))
@@ -185,11 +189,9 @@ class Converter(object):
         while lat <= area_max_lat:
             lon = area_min_lon
             while lon <= area_max_lon:
-                shards.append(Shard(output_file_name,lat,lon,lat+shard_size_degrees,lon+shard_size_degrees))
+                shards.append(Shard(base_file_name,lat,lon,lat+shard_size_degrees,lon+shard_size_degrees))
                 lon += shard_size_degrees
             lat += shard_size_degrees
-
-        print(shards)
 
         for shard in shards:
             geojson_out = copy.deepcopy(geojson)
@@ -221,7 +223,10 @@ class Converter(object):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("output_file",help="The output geojson file to write out the converted data")
+    parser.add_argument("--shard_size", help="The size of each shard in degrees",type=float,default=1.0)
+    parser.add_argument("--scale", help="Factor for scaling", type=int, default=1)
+
     args = parser.parse_args()
     print("Preparing => %s"%(args.output_file))
-    Converter().convert(args.output_file)
+    Converter().convert(args.output_file,args.shard_size,args.scale)
 
