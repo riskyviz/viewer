@@ -1,26 +1,17 @@
 
 
-function getColor(d) {
-    return d >= configuration["risk-thresholds"]["medium-high"] ? '#ff0034' :
-        d >= configuration["risk-thresholds"]["low-medium"]  ? '#FFD300' :
-            d >= 0 ? '#80C904':
-                'transparent';
-}
-
 function style(feature) {
     return {
-        fillColor: getColor(feature.properties.scores[feature.properties.scores.length-1]),
+        fillColor: getColour(feature.properties.scores[model.getSelectedTimeIndex()][configuration["selected_field"]]),
         weight: 0.2,
         opacity: 1,
         color: 'black',
-        fillOpacity: 0.6
+        fillOpacity: 0.5
     };
 }
 
 function onEachFeature(feature, layer) {
     layer.on({
-        mouseover: highlightFeature,
-        mouseout: resetHighlight,
         click: onClick
     });
 }
@@ -71,6 +62,9 @@ class View {
     }
 
     initMap(lon,lat,min_zoom,max_zoom) {
+        this.min_zoom = min_zoom;
+        this.max_zoom = max_zoom;
+
         var that = this;
 
         this.map = L.map('mapid',{
@@ -86,8 +80,6 @@ class View {
         }).addTo(this.map);
 
         this.map.on('moveend', function() {
-            // alert("moveend:"+JSON.stringify(getMapBoundaries()));
-            console.log(that.map.getZoom());
             model.loadDataForZoom(that.map.getZoom(),true);
         });
     }
@@ -96,7 +88,7 @@ class View {
         if (this.marker) {
             this.marker.remove();
         }
-        this.map.flyTo([lat, lon], 14);
+        this.map.flyTo([lat, lon], this.max_zoom);
         this.marker = L.marker([lat, lon], {icon: this.logoIcon}).addTo(this.map);
         // loadDataForZoom(this.map.getZoom(),false);
     }
@@ -106,6 +98,11 @@ class View {
         var sw = bounds.getSouthWest();
         var ne = bounds.getNorthEast();
         return { "min_lon": sw.lng, "max_lon":ne.lng, "min_lat":sw.lat, "max_lat":ne.lat }
+    }
+
+    refresh() {
+        this.clearDataLayers();
+        this.updateDataLayers();
     }
 
     clearDataLayers() {

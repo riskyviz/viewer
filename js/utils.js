@@ -1,32 +1,47 @@
 
 function parseDate(s) {
-    // parse date of the form YYYY-MM-DD
+    // parse date of the form YYYY-MM-DD HH:MM:SS
     var year = parseInt(s.slice(0,4));
     var month = parseInt(s.slice(5,7));
     var day = parseInt(s.slice(8,10));
-    return new Date(year,month-1,day,0,0,0,0);
+    var hour = parseInt(s.slice(11,13));
+    var minute = parseInt(s.slice(14,17));
+    var second = parseInt(s.slice(18,20));
+
+    return new Date(Date.UTC(year,month-1,day,hour,minute,second,0));
 }
 
 /**
- * Format a javascript Date and return a short string eg "Mon 31 Jul"
+ * Format a javascript Date according to the locale
  * @param dt
  * @returns {string}
  */
 function formatDate(dt) {
-    return dt.toString().slice(0,10)
+    return dt.toLocaleString();
 }
 
-function getDates(startDate, endDate) {
-    var dates = [],
-        currentDate = startDate,
-        addDays = function(days) {
-            var date = new Date(this.valueOf());
-            date.setDate(date.getDate() + days);
-            return date;
-        };
-    while (currentDate <= endDate) {
-        dates.push(formatDate(currentDate));
-        currentDate = addDays.call(currentDate, 1);
+function configureSelect(id, values, labels, cb, initial_value) {
+    var sel = document.getElementById(id);
+    sel.innerHTML = "";
+    var initial_index = -1;
+    for(var idx=0; idx<values.length; idx++) {
+        var opt_ele = document.createElement("option");
+        opt_ele.setAttribute("value",values[idx]);
+        var label_txt = document.createTextNode(labels[idx]);
+        opt_ele.appendChild(label_txt);
+        sel.appendChild(opt_ele);
+        if (initial_value != undefined && values[idx] == initial_value) {
+            initial_index = idx;
+        }
     }
-    return dates;
-};
+    if (initial_index >= 0) {
+        sel.selectedIndex = initial_index;
+    }
+    sel.onchange = function(evt) {
+        cb(sel.value);
+    }
+}
+
+function wraps(s) {
+    return "&nbsp;"+s+"&nbsp;";
+}

@@ -4,26 +4,17 @@
  *
  * @param scores array of scores
  * @param times array of Date objects
- * @param threshold1 threshold between low and medium scores
- * @param threshold2 threshold between medium and high scores
  * @param height height of the bar (suggest 40 or 50) in pixels
  * @param width width of the bar, suggest at least 300
  * @returns {HTMLCanvasElement}
  */
-function createColourBar(scores,times,threshold1,threshold2,height,width) {
+function createColourBar(scores,times,height,width) {
 
-    // work out the end date (with the latest score) ...
-    var endDate = parseDate(times[times.length-1]);
-    var startDate = parseDate(times[0]);
-
-    cscores = [];
-    for(var idx=scores.length-1; idx>=0; idx--) {
-        cscores.push(scores[idx]);
+    var cscores = [];
+    for(var idx=0; idx<scores.length; idx++) {
+        cscores.push(scores[idx][configuration["selected_field"]]);
     }
 
-    document.getElementById("endDate").textContent = formatDate(endDate);
-    document.getElementById("startDate").textContent = formatDate(startDate);
-    document.getElementById("date").textContent = formatDate(endDate);
     // create a canvas object for drawing the bar
     var cnv = document.createElement("canvas");
 
@@ -43,12 +34,11 @@ function createColourBar(scores,times,threshold1,threshold2,height,width) {
     var step = barwidth / count;
     for(var idx=0; idx < count; idx+=1) {
         var score = cscores[idx];
-        var colour = getColor(score);
+        var colour = getColour(score);
         if (colour != null) {
             ctx.fillStyle = colour;
             ctx.globalCompositeOperation = "lighter"
-            ctx.fillRect(marginx + barwidth - (step*(1+idx)), 0, step, barheight);
-
+            ctx.fillRect(marginx + step*idx, 0, step, barheight);
         }
     }
 
@@ -73,7 +63,6 @@ function createColourBar(scores,times,threshold1,threshold2,height,width) {
         ctx.stroke();
     }
 
-
     // add start "tick"
     ctx.moveTo(x0,barheight);
     ctx.lineTo(x0,barheight+5);
@@ -83,10 +72,6 @@ function createColourBar(scores,times,threshold1,threshold2,height,width) {
     ctx.moveTo(x1,barheight);
     ctx.lineTo(x1,barheight+5);
     ctx.stroke();
-
-    // add start and end labels
-    ctx.fillText(formatDate(startDate),x0,y,2*marginx);
-    ctx.fillText(formatDate(endDate),x1,y,2*marginx);
 
     // add an enclosing rectangle around the colour bar to make it look
     // a bit nicer
@@ -100,12 +85,24 @@ function createChart(scores,times){
     var cht = document.getElementById('myChart').getContext('2d');
     cht.height = 500;
 
-    // work out the end date (with the latest score) ...
-    var endDate = parseDate(times[times.length-1]);
-    // and the start date in the history
-    var startDate = parseDate(times[0]);
-    var dateArray = []
-    dateArray = getDates(startDate,endDate);
+    var field = configuration["selected_field"];
+    var label = configuration["field_labels"][field];
+    var units = configuration["field_units"][field];
+
+    var cscores = [];
+    for(var idx=0; idx<scores.length; idx++) {
+        cscores.push(scores[idx][field]);
+    }
+
+    var y_label = label;
+    if (units) {
+        y_label += " ( "+units+" )";
+    }
+
+    var dateArray = [];
+    for(var idx=0; idx<times.length; idx++) {
+        dateArray.push(parseDate(times[idx]));
+    }
 
     var chart = new Chart(cht, {
         // The type of chart we want to create
@@ -119,7 +116,7 @@ function createChart(scores,times){
                 borderColor: 'rgb(87,164,255)',
                 borderWidth: 3.5,
                 backgroundColor: 'rgba(255,255,255,0)',
-                data: scores,
+                data: cscores,
                 fill: false,
                 pointRadius: 1.5,
                 pointHoverRadius: 3.5,
@@ -133,13 +130,14 @@ function createChart(scores,times){
             aspectRatio: 1.8,
             scales:{
                 xAxes:[{
+
                     display: true,
                     gridLines: {
                         display: false
                     },
 
                     ticks:{
-                        display: true,
+                        display: false,
                         autoSkip: true,
                         maxTicksLimit: 2,
                         maxRotation: 0,
@@ -158,14 +156,12 @@ function createChart(scores,times){
                 }],
                 yAxes: [{
                     scaleLabel: {
-                        display: false,
-                        labelString: 'Risk'
+                        display: true,
+                        labelString: y_label
                     },
                     display: true,
                     ticks:{
-                        fontFamily: 'Source Code Pro',
-                        min: 0,
-                        max: 9
+                        fontFamily: 'Source Code Pro'
                     }
                 }, {
                     position: 'right',
@@ -184,7 +180,7 @@ function createChart(scores,times){
             tooltips: {
                 callbacks: {
                     label: function(tooltipItem) {
-                        return "Case Rate " + tooltipItem.yLabel.toFixed(2);
+                        return tooltipItem.yLabel.toFixed(2);
                     }
                 },
                 bodyFontSize: 16,
@@ -199,3 +195,74 @@ function createChart(scores,times){
     });
 }
 
+function updateCharts() {
+    var scores = model.getLocalScores();
+    var score = scores[model.getSelectedTimeIndex()][configuration["selected_field"]];
+
+    var colour = getColour(score);
+    var risk_label = getLabel(score);
+    var risk_category = getCategory(score);
+
+    if (risk_category == "high") {
+        document.getElementById("riskScale").setAttribute("src", 'img/highRisk.svg');
+    } else if (risk_category == "medium") {
+        document.getElementById("riskScale").setAttribute("src", 'img/medRisk.svg');
+    } else {
+        document.getElementById("riskScale").setAttribute("src", 'img/lowRisk.svg');
+    }
+    var advice_area = document.getElementById("advice_by_risk");
+    if (advice_area) {
+        advice_area.innerHTML = "";
+        if (configuration["advice_by_risk"]) {
+            var advice_html = configuration["advice_by_risk"][risk_category];
+            if (advice_html) {
+                advice_area.innerHTML = advice_html;
+            }
+        }
+    }
+    var cb = createColourBar(scores, model.getTimes(),250, 250);
+    document.getElementById("colorBar").innerHTML = "";
+    document.getElementById("colorBar").appendChild(cb);
+    $('#myChart').remove();
+    $('#chartFather').append('<canvas width="750" height="250" id="myChart"></canvas>');
+    createChart(scores, model.getTimes());
+    updateText();
+}
+
+function updateText() {
+    var scores = model.getLocalScores();
+    var score = scores[model.getSelectedTimeIndex()][configuration["selected_field"]];
+
+    var colour = getColour(score);
+    var risk_label = getLabel(score);
+    var risk_category = getCategory(score);
+
+    var field = configuration["selected_field"];
+    var field_label = configuration["field_labels"][field];
+    var units = configuration["field_units"][field];
+
+    var local_date = formatDate(parseDate(model.getSelectedTime()));
+    var score_string = score.toFixed(2);
+    var location_label = configuration["location"];
+    $(".place_name").html(location_label);
+    $(".field_label").html(field_label);
+    $(".field_units").html(units);
+    $(".field_value").html(score_string);
+    $(".forecast_time").html(local_date);
+    $(".risk_level").html(risk_label);
+
+    document.getElementById("indicator").setAttribute("fill", getColour(score));
+
+    var summary_html = "<p>The forecast background value of "+field_label;
+    if (location_label != "") {
+        summary_html += " in " + location_label;
+    }
+    summary_html += " at "+local_date;
+    summary_html += " is "+score_string;
+    if (units != "") {
+        summary_html += " "+units;
+    }
+    summary_html += ".</p><p>"
+    summary_html += "The corresponding forecast background risk level is "+risk_label+".</p>";
+    $(".summary_html").html(summary_html);
+}

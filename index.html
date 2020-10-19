@@ -7,6 +7,9 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+            integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+            crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -36,6 +39,20 @@
     <div class="navbar-brand">
         <img id="geolocate_btn" src="img/navbrand.svg" alt="">
     </div>
+    <form class="mx-2 my-auto d-inline w-100" id="dataForm">
+        <div class="input-group">
+            <select id="select_data">
+            </select>
+        </div>
+    </form>
+
+    <div class="input-group">
+        <button id="btn_minus">&nbsp;-&nbsp;</button>
+        <select id="select_time">
+        </select>
+        <button id="btn_plus">+</button>
+    </div>
+
     <form class="mx-2 my-auto d-inline w-100" id="searchForm">
         <div class="input-group">
 
@@ -68,31 +85,33 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <h5 class="card-title" id="result"></h5>
-                            <p id="date"></p>
+                            <p class="forecast_time"></p>
                         </div>
                         <div class="col-sm-6" id="scaleBox">
                             <img src="img/medRisk.svg" alt="" id="riskScale">
                         </div>
                     </div>
                     <div class="row" id="summary-text">
-                        <p class="card-text">This area of <span id="placeName"></span> is currently <em
-                                id="riskLevel"></em>. <span id="adviceSummary"></span>.</p>
-                        <p id="explanation_html"></p>
+                        <span class="summary_html"></span>
                     </div>
                 </div>
                 <div class="card-header">
                     <ul class="nav nav-pills nav-fill">
                         <li class="nav-item">
                             <a class="nav-link active" id="advice-tab" data-toggle="tab" href="#advice" role="tab"
-                               aria-controls="advice" aria-selected="true">Advice</a>
+                               aria-controls="advice" aria-selected="true">Local Advice</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="stripes-tab" data-toggle="tab" href="#stripes" role="tab"
-                               aria-controls="stripes" aria-selected="false">Risk Stripes</a>
+                               aria-controls="stripes" aria-selected="false">Local Forecast Stripe</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="chart-tab" data-toggle="tab" href="#chart" role="tab"
-                               aria-controls="chart" aria-selected="false">Risk History</a>
+                               aria-controls="chart" aria-selected="false">Local Forecast Chart</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="about-tab" data-toggle="tab" href="#about" role="tab"
+                               aria-controls="about" aria-selected="false">About</a>
                         </li>
                     </ul>
                 </div>
@@ -101,7 +120,7 @@
                     <div class="tab-content" id="myTabContent">
                         <div class="tab-pane fade show active" role="tabpanel" id="advice" aria-labelledby="advice-tab">
                             <div class="row">
-                                <div class="col-md-6" id="advice_by_risk">
+                                <div class="col-md-12" id="advice_by_risk">
                                 </div>
                             </div>
                         </div>
@@ -109,11 +128,9 @@
                             <div class="row">
                                 <div class="col-md-6" id="riskStripesDesc">
                                     <h3>Risk Stripes</h3>
-                                    <p>This graphic is simple a visual representation of the changing risk level in
-                                        <span id="riskStripePlace"></span> between <span
-                                                id="startDate"></span> and <span id="endDate"></span>. The risk level
-                                        for each day in this period is represented by a stripe; the colour of each
-                                        stripe representing the severity of the risk</p>
+                                    <p>This graphic is simple a visual representation of the predicted risk level <span class=".place_name"></span> over the forecast period
+                                         <span class="start_date"></span> and <span class="end_date"></span>.
+                                    </p>
                                 </div>
                                 <div class="col-md-6">
                                     <div id="colorBar"></div>
@@ -128,11 +145,15 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <p>A detailed chart showing how the risk level has changed over time.
-                                        The most recent risk level is approximately
-                                        <span id="currentRate"
-                                              style="font-family: 'Source Code Pro'; font-weight: bold; font-size: large"></span>.
+                                    <p>A detailed chart showing how the <span class="field_label"></span> is predicted
+                                        to change over the forecast period.
                                     </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab">
+                            <div class="row">
+                                <div class="col-xl-12 bg-gray" id="about_html">
                                 </div>
                             </div>
                         </div>
@@ -140,11 +161,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-6 bg-gray" id="info_area_html">
-        </div>
     </div>
 </div>
-
 
 </body>
 </html>

@@ -1,27 +1,55 @@
 {
   "title": "Risk Finder",
   "headline": "Find out the risk from air pollution in your area...",
-  "explanation_html": "The risk levels are estimated using the UK Met Office AQUM (Air Quality Unified Model).\n<a href=\"https://metdatasa.blob.core.windows.net/covid19-response/README_data_air_quality.html\"> Learn more.</a>",
-  "risk-thresholds": {
-    "low-medium": 3.5,
-    "medium-high": 6.5
+  "combined_field_name" : "aqi",
+  "field_names": ["pm2p5_conc","pm10_conc","no2_conc","so2_conc","o3_conc"],
+  "field_labels": {
+     "pm2p5_conc": "PM2.5 Level",
+     "pm10_conc": "PM10 Level",
+     "no2_conc": "Nitrogen Dioxide Level",
+     "so2_conc": "Suphur Dioxide Level",
+     "o3_conc": "Ozone Level",
+     "aqi": "Air Quality Index"
   },
+  "field_units" : {
+     "pm2p5_conc": "µg/m³",
+     "pm10_conc": "µg/m³",
+     "no2_conc": "µg/m³",
+     "so2_conc": "µg/m³",
+     "o3_conc": "µg/m³",
+     "aqi": ""
+  },
+  "risk_colours" : ["#9cff9c","#31ff00","#31cf00","#ffff00","#ffcf00","#ff9a00","#ff6464","#ff0000","#990000","#ce30ff"],
+  "risk_labels": ["Low","Low","Low","Moderate","Moderate","Moderate","High","High","High","Very High"],
+  "risk_categories": ["low","low","low","medium","medium","medium","high","high","high","very_high"],
+  "risk_thresholds": {
+    "pm2p5_conc":[12,24,36,42,48,54,59,65,71],
+    "pm10_conc":[17,34,51,59,67,76,84,92,101],
+    "so2_conc": [89,178, 267, 355, 444, 533, 711, 888, 1065],
+    "no2_conc": [68,135,201,268,335,401,468,535,601],
+    "o3_conc": [33, 66, 100, 120, 140, 160, 187, 214, 241]
+  },
+  "selected_field": "aqi",
+  "selected_time_index": 4,
   "advice_by_risk": {
+    "very_high": "config/very_high_risk.html",
     "high": "config/high_risk.html",
     "medium": "config/medium_risk.html",
     "low": "config/low_risk.html"
   },
-  "info_area_html": "config/info.html",
+  "about_html": "config/about.html",
+  "data_url": "data/current",
   "zoom_levels": {
-    "14": "output14.geojson",
-    "13": "output14.geojson",
-    "12": "output13.geojson",
-    "11": "output12.geojson",
-    "10": "output11.geojson",
-    "9": "output10.geojson",
-    "8": "output9.geojson",
-    "7": "output9.geojson",
-    "6": "output9.geojson",
-    "5": "output9.geojson"
-  }
+    "4": "output11.geojson",
+    "5": "output11.geojson",
+    "6": "output12.geojson",
+    "7": "output12.geojson",
+    "8": "output13.geojson",
+    "9": "output13.geojson",
+    "10": "output14.geojson"
+  },
+  "longitude": 20.0,
+  "latitude": 45.0,
+  "location": "",
+  "initial_zoom": 7
 }
