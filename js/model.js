@@ -3,12 +3,18 @@ class Model {
     constructor() {
         this.times = null;
         this.selected_time = null;
-        this.selected_time_index = -1;
+        this.selected_time_index = 0;
         this.areas = [];
         this.loadCache = {};
-        this.current_zoom = null;
         this.current_root_name = '';
         this.local_scores = [];
+        this.lon = configuration["longitude"];
+        this.lat = configuration["latitude"];
+    }
+
+    setLocation(lon,lat) {
+        this.lon = lon;
+        this.lat = lat;
     }
 
     setBoundingBox(bounding_box) {
@@ -37,6 +43,11 @@ class Model {
         }
     }
 
+    setSelectedTimeIndex(time_index) {
+        this.selected_time_index = time_index;
+        this.selected_time = this.times[time_index];
+    }
+
     getSelectedTime() {
         return this.selected_time;
     }
@@ -53,28 +64,26 @@ class Model {
         return this.local_scores;
     }
 
-    async loadDataForZoom(level,update_data_layers) {
+    async loadDataForZoom(level) {
         level = Math.floor(level);
         this.current_zoom = level;
         var root_name = configuration["zoom_levels"]["" + level];
-        if (root_name == this.current_root_name) {
-            if (update_data_layers) {
-                view.updateDataLayers();
-            }
-            return;
-        }
-        view.clearDataLayers();
-        this.loadCache = {};
+
         if (root_name != this.current_root_name) {
-            var geojson_root = await fetch(configuration["data_url"] + "/" + root_name,{cache: "no-store"});
+            this.loadCache = {};
+            view.clearDataLayers();
+            var geojson_root = await fetch(configuration["data_url"] + "/" + root_name, {cache: "no-store"});
             var geodata_root = await geojson_root.json();
             this.loadAreas(geodata_root);
             this.setTimes(geodata_root["properties"]["times"]);
+            this.setSelectedTimeIndex(configuration["selected_time_index"]);
             this.setBoundingBox(geodata_root["properties"]["bounding_box"]);
             this.current_root_name = root_name;
-            view.updateDataLayers();
         }
 
+        var area_geojsons = await view.updateDataLayers();
+        this.configureLocal(area_geojsons);
+        updateCharts();
     }
 
     loadAreas(geodata_root) {
@@ -101,6 +110,35 @@ class Model {
             }
         }
         return result;
+    }
+
+    configureLocal(area_geojsons) {
+        var point1 = turf.point([this.lon, this.lat], {});
+        for (var fn in area_geojsons) {
+            var geodata = area_geojsons[fn];
+            var features = geodata.features;
+            for (var i = 0, len = features.length; i < len; i++) {
+                var isInside = turf.inside(point1, features[i]);
+                if (isInside) {
+                    var coords = features[i].geometry.coordinates[0][0];
+                    var min_lon = 180;
+                    var min_lat = 90;
+                    var max_lon = -180;
+                    var max_lat = -90;
+                    for(var idx=0; idx<coords.length; idx++) {
+                        var lon = coords[idx][0];
+                        var lat = coords[idx][1];
+                        min_lon = Math.min(lon,min_lon);
+                        min_lat = Math.min(lat,min_lat);
+                        max_lon = Math.max(lon,max_lon);
+                        max_lat = Math.max(lat,max_lat);
+                    }
+                    view.highlightArea(min_lon,min_lat,max_lon,max_lat);
+                    this.setLocalScores(features[i].properties.scores);
+                    break;
+                }
+            }
+        }
     }
 }
 

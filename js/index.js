@@ -23,8 +23,8 @@ async function boot() {
     var lat = configuration["latitude"];
     var lon = configuration["longitude"];
     view.initMap(lon, lat, min_zoom, max_zoom);
-    await model.loadDataForZoom(configuration["initial_zoom"], false);
-    model.setSelectedTime(model.times[configuration["selected_time_index"]]);
+
+    await model.loadDataForZoom(configuration["initial_zoom"]);
 
     var location = configuration["location"];
     if (location != "") {

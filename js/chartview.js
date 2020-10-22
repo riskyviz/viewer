@@ -1,3 +1,6 @@
+var chart = null;
+
+
 /**
  * Create a colour bar for the score history and return its HTML element,
  * ready to be added to the document
@@ -27,7 +30,7 @@ function createColourBar(scores,times,height,width) {
 
     // work out the height and width of the colourbar itself
     var barwidth = width - (2*marginx);
-    var barheight = height-25;
+    var barheight = height-40;
 
     // draw the coloured rectangles
     var count = cscores.length;
@@ -37,19 +40,16 @@ function createColourBar(scores,times,height,width) {
         var colour = getColour(score);
         if (colour != null) {
             ctx.fillStyle = colour;
-            ctx.globalCompositeOperation = "lighter"
-            ctx.fillRect(marginx + step*idx, 0, step, barheight);
+            ctx.globalCompositeOperation = "lighter";
+            var rheight = height;
+            var roffset = 0;
+            if (idx != model.getSelectedTimeIndex()) {
+                rheight = height-40;
+                roffset = 20;
+            }
+            ctx.fillRect(marginx + step*idx, roffset, step, rheight);
         }
     }
-
-    // label the start and end dates
-    var x0 = marginx + step/2;
-    var x1 = width - marginx - step/2;
-    var y = barheight+15;
-
-    ctx.textAlign = "center";
-    ctx.fillStyle = "black";
-    ctx.font = "bold 12px 'Source Code Pro'";
 
     // draw some lines dividing each day
     ctx.strokeStyle = "grey";
@@ -62,16 +62,6 @@ function createColourBar(scores,times,height,width) {
         ctx.lineTo(x, barheight);
         ctx.stroke();
     }
-
-    // add start "tick"
-    ctx.moveTo(x0,barheight);
-    ctx.lineTo(x0,barheight+5);
-    ctx.stroke();
-
-    // add end "tick"
-    ctx.moveTo(x1,barheight);
-    ctx.lineTo(x1,barheight+5);
-    ctx.stroke();
 
     // add an enclosing rectangle around the colour bar to make it look
     // a bit nicer
@@ -104,7 +94,20 @@ function createChart(scores,times){
         dateArray.push(parseDate(times[idx]));
     }
 
-    var chart = new Chart(cht, {
+    function customBorderColour( context ){
+        if (context.dataIndex == model.getSelectedTimeIndex()) {
+            return "black";
+        } else {
+            return 'rgb(87,164,255)';
+        }
+    }
+
+    function customColour( context ) {
+        var value = context.dataset.data[ context.dataIndex ];
+        return getColour(value);
+    }
+
+    chart = new Chart(cht, {
         // The type of chart we want to create
         type: 'line',
 
@@ -118,9 +121,10 @@ function createChart(scores,times){
                 backgroundColor: 'rgba(255,255,255,0)',
                 data: cscores,
                 fill: false,
-                pointRadius: 1.5,
-                pointHoverRadius: 3.5,
-                pointBackgroundColor: 'rgb(87,164,255)'
+                pointRadius: 5,
+                pointHoverRadius: 8,
+                pointBackgroundColor: customColour,
+                pointBorderColor: customBorderColour
             }]
         },
 
@@ -220,14 +224,21 @@ function updateCharts() {
             }
         }
     }
-    var cb = createColourBar(scores, model.getTimes(),250, 250);
-    document.getElementById("colorBar").innerHTML = "";
-    document.getElementById("colorBar").appendChild(cb);
+    updateColourBar();
     $('#myChart').remove();
     $('#chartFather').append('<canvas width="750" height="250" id="myChart"></canvas>');
     createChart(scores, model.getTimes());
     updateText();
 }
+
+function updateColourBar() {
+    var scores = model.getLocalScores();
+    var cb = createColourBar(scores, model.getTimes(),250, 250);
+    document.getElementById("colorBar").innerHTML = "";
+    document.getElementById("colorBar").appendChild(cb);
+}
+
+
 
 function updateText() {
     var scores = model.getLocalScores();

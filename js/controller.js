@@ -27,6 +27,10 @@ class Controller {
 
     selectTime(time) {
         model.setSelectedTime(time);
+        if (chart) {
+            chart.update();
+        }
+        updateColourBar();
         view.refresh();
         updateText();
     }
@@ -54,6 +58,7 @@ class Controller {
                                 updateText();
                             }
                         );
+                        break;
                     }
                 }
             }
@@ -61,21 +66,13 @@ class Controller {
     }
 
     async locate(lon,lat) {
-        var point1 = turf.point([lon, lat], {});
+        view.setMaxZoom();
         view.showOnMap(lon, lat);
-        var area_geojsons = await view.updateDataLayers();
+        model.setLocation(lon,lat);
+        /* var area_geojsons = await view.updateDataLayers();
 
-        for (var fn in area_geojsons) {
-            var geodata = area_geojsons[fn];
-            var features = geodata.features;
-            for (var i = 0, len = features.length; i < len; i++) {
-                var isInside = turf.inside(point1, features[i]);
-                if (isInside) {
-                    model.setLocalScores(features[i].properties.scores);
-                    updateCharts();
-                }
-            }
-        }
+        model.configureLocal(area_geojsons);
+        updateCharts(); */
     }
 }
 

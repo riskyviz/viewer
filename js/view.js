@@ -50,15 +50,14 @@ function onClick(e){
 class View {
     constructor() {
         this.map = null;
-        this.marker = null;
         this.dataLayers = {};
-        this.current_zoom = -1;
         this.logoIcon = L.icon({
             iconUrl: 'img/marker.svg',
             iconSize: [40, 50], // size of the icon
             iconAnchor: [20, 49], // point of the icon which will correspond to marker's location
             popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
         });
+        this.highlight = null;
     }
 
     initMap(lon,lat,min_zoom,max_zoom) {
@@ -80,17 +79,25 @@ class View {
         }).addTo(this.map);
 
         this.map.on('moveend', function() {
-            model.loadDataForZoom(that.map.getZoom(),true);
+            model.loadDataForZoom(that.map.getZoom());
         });
     }
 
+    setMaxZoom() {
+        this.map.setZoom(this.max_zoom);
+    }
+
     showOnMap(lon,lat) {
-        if (this.marker) {
-            this.marker.remove();
+        this.map.flyTo([lat, lon], this.map.getZoom());
+        // this.marker = L.marker([lat, lon], {icon: this.logoIcon}).addTo(this.map);
+    }
+
+    highlightArea(lon_min,lat_min,lon_max,lat_max) {
+        var bounds = [[lat_max,lon_max],[lat_min,lon_min]];
+        if (this.highlight) {
+            this.map.removeLayer(this.highlight);
         }
-        this.map.flyTo([lat, lon], this.max_zoom);
-        this.marker = L.marker([lat, lon], {icon: this.logoIcon}).addTo(this.map);
-        // loadDataForZoom(this.map.getZoom(),false);
+        this.highlight = L.rectangle(bounds, {color: 'blue', weight: 2, fill: false}).addTo(this.map);
     }
 
     getMapBoundaries() {
