@@ -31,8 +31,10 @@ async function boot() {
         controller.locationSearch(location);
     } else {
         await controller.locate(lon, lat);
+        geolocate();
     }
-    document.getElementById("geolocate_btn").onclick = function() {
+
+    function geolocate() {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 var lon = position.coords.longitude;
@@ -42,7 +44,11 @@ async function boot() {
         }
     }
 
-    var field_names = [configuration["combined_field_name"]];
+    document.getElementById("geolocate_btn").onclick = function() {
+        geolocate();
+    }
+
+    var field_names = [];
     var field_labels = [];
     for(var idx=0; idx<configuration["field_names"].length; idx++) {
         field_names.push(configuration["field_names"][idx]);

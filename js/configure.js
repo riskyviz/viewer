@@ -54,9 +54,6 @@ async function configure() {
 }
 
 function getBand(d,field_name) {
-    if (field_name == configuration["combined_field_name"]) {
-        return d;
-    }
     var thresholds =  configuration["risk_thresholds"][field_name];
     var band = thresholds.length;
     for(var idx=0; idx<thresholds.length; idx++) {

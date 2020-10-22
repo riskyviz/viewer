@@ -2,7 +2,7 @@
   "title": "Risk Finder",
   "headline": "Find out the risk from air pollution in your area...",
   "combined_field_name" : "aqi",
-  "field_names": ["pm2p5_conc","pm10_conc","no2_conc","so2_conc","o3_conc"],
+  "field_names": ["aqi","pm2p5_conc","pm10_conc","no2_conc","so2_conc","o3_conc"],
   "field_labels": {
      "pm2p5_conc": "PM2.5 Level",
      "pm10_conc": "PM10 Level",
@@ -27,7 +27,8 @@
     "pm10_conc":[17,34,51,59,67,76,84,92,101],
     "so2_conc": [89,178, 267, 355, 444, 533, 711, 888, 1065],
     "no2_conc": [68,135,201,268,335,401,468,535,601],
-    "o3_conc": [33, 66, 100, 120, 140, 160, 187, 214, 241]
+    "o3_conc": [33, 66, 100, 120, 140, 160, 187, 214, 241],
+    "aqi": [1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5]
   },
   "selected_field": "aqi",
   "selected_time_index": 4,

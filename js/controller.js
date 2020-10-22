@@ -40,7 +40,6 @@ class Controller {
         var that = this;
         var params = new URLSearchParams({
             "q": location_string,
-            /* "countrycodes": "gb", */
             "format": "json"
         });
         fetch("https://nominatim.openstreetmap.org/search?" + params.toString()).then(
@@ -69,10 +68,6 @@ class Controller {
         view.setMaxZoom();
         view.showOnMap(lon, lat);
         model.setLocation(lon,lat);
-        /* var area_geojsons = await view.updateDataLayers();
-
-        model.configureLocal(area_geojsons);
-        updateCharts(); */
     }
 }
 

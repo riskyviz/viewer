@@ -265,10 +265,7 @@ function updateText() {
     document.getElementById("indicator").setAttribute("fill", getColour(score));
 
     var summary_html = "<p>The forecast background value of "+field_label;
-    if (location_label != "") {
-        summary_html += " in " + location_label;
-    }
-    summary_html += " at "+local_date;
+    summary_html += " in the selected area at "+local_date;
     summary_html += " is "+score_string;
     if (units != "") {
         summary_html += " "+units;
