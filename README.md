@@ -1,54 +1,14 @@
 # viewer
 
-Simple and re-usable web app for viewing geo-localized risk and environmental data 
-requiring only a static web server.
+A simple and re-usable web app for viewing and exploring geo-localized risk and environmental data requiring only a static web server.
 
 Code based on the (riskCOVID prototype webapp repo)[https://github.com/riskyviz/webapp/]
 
-The viewer is currently pre-loaded with UK (London area) air quality data for January 1st - 7th 2020.  
+The viewer is currently set up to display CAMS european air pollution forecasts and is hosted at https://visualtopology.com/air_pollution/  
 
-Open the viewer hosted by github pages: [https://riskyviz.github.io/viewer/index.html](https://riskyviz.github.io/viewer/index.html)
-
-The data is obtained from the Met Office AQUM (Air Quality Unified Model), for more information see:
-
-* https://www.metoffice.gov.uk/research/weather/atmospheric-dispersion/atmospheric-composition
-
-* https://metdatasa.blob.core.windows.net/covid19-response/README_data_air_quality.html
-
-## Downloading and preparing AQUM data
-
-Data is loaded and converted to `output.geojson` and a number of shard files (`shardNNN_output.geojson`) to be loaded and viewed in the web app using:
-
-```
-cd data
-wget https://metdatasa.blob.core.windows.net/covid19-response/metoffice_aqum_daily/daqi/aqum_daily_daqi_mean_20200818.nc
-wget https://metdatasa.blob.core.windows.net/covid19-response/metoffice_aqum_daily/daqi/aqum_daily_daqi_mean_20200819.nc
-wget https://metdatasa.blob.core.windows.net/covid19-response/metoffice_aqum_daily/daqi/aqum_daily_daqi_mean_20200820.nc
-...
-
-python3 convert.py output.geojson
-```
-
-Note - to run `convert.py` you will need to install the following packages:
-
-```
-pip3 install pyproj
-pip3 install xarray
-pip3 install netcdf4
-```
+However, it is intended to be easily customisable for displaying and communicating other enviromental datasets to the public.
 
 ## Customising for other applications
 
-Documentation TODO
+Documentation TODO covering configuration files and the `geosharded` geojson data file format 
 
-## Roadmap
-
-### TODO
-
-* Import advice icons design from the riskCOVID prototype
-* Merge adjacent small area risks for zoomed out map
-* View forecast risk levels as well as current and previous risk levels
-
-### Completed
-
-* Generate and work with *sharded* geojson files to avoid large data transfers
