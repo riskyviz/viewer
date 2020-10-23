@@ -65,6 +65,7 @@ class Controller {
     }
 
     async locate(lon,lat) {
+        $('#myModal').modal('show');
         view.setMaxZoom();
         view.showOnMap(lon, lat);
         model.setLocation(lon,lat);

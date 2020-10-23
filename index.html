@@ -39,18 +39,17 @@
     <div class="navbar-brand">
         <img id="geolocate_btn" src="img/navbrand.svg" alt="">
     </div>
-    <form class="mx-2 my-auto d-inline w-100" id="dataForm">
-        <div class="input-group">
-            <select class="form-control" id="select_data">
-            </select>
-        </div>
-    </form>
 
     <div class="input-group">
-        <button id="btn_minus">&nbsp;-&nbsp;</button>
+        <select class="form-control" id="select_data">
+        </select>
+    </div>
+
+    <div class="input-group">
+        <button id="btn_minus" class="btn">&nbsp;-&nbsp;</button>
         <select class="form-control" id="select_time">
         </select>
-        <button id="btn_plus">+</button>
+        <button id="btn_plus" class="btn"> + </button>
     </div>
 
     <form class="mx-2 my-auto d-inline w-100" id="searchForm">
@@ -162,6 +161,21 @@
             </div>
         </div>
     </div>
+</div>
+
+<div id="myModal" class="modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Loading...</h5>
+      </div>
+      <div class="modal-body">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 </body>

@@ -70,7 +70,7 @@ class Model {
         var root_name = configuration["zoom_levels"]["" + level];
 
         if (root_name != this.current_root_name) {
-            this.loadCache = {};
+            // this.loadCache = {};
             view.clearDataLayers();
             var geojson_root = await fetch(configuration["data_url"] + "/" + root_name, {cache: "no-store"});
             var geodata_root = await geojson_root.json();
@@ -84,6 +84,7 @@ class Model {
         var area_geojsons = await view.updateDataLayers();
         this.configureLocal(area_geojsons);
         updateCharts();
+        $('#myModal').modal('hide');
     }
 
     loadAreas(geodata_root) {

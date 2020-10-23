@@ -81,6 +81,10 @@ class View {
         this.map.on('moveend', function() {
             model.loadDataForZoom(that.map.getZoom());
         });
+
+        this.map.on('zoomstart',function() {
+            $('#myModal').modal('show');
+        });
     }
 
     setMaxZoom() {
