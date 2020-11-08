@@ -76,7 +76,9 @@ class Model {
             var geodata_root = await geojson_root.json();
             this.loadAreas(geodata_root);
             this.setTimes(geodata_root["properties"]["times"]);
-            this.setSelectedTimeIndex(configuration["selected_time_index"]);
+            if (this.selected_time == null) {
+                this.setSelectedTimeIndex(configuration["selected_time_index"]);
+            }
             this.setBoundingBox(geodata_root["properties"]["bounding_box"]);
             this.current_root_name = root_name;
         }
