@@ -189,12 +189,6 @@ body{
     background: #e9e9e9;
 }
 
-#riskScale{
-    text-align: center;
-    max-height: 25px;
-    margin-bottom: 5%;
-}
-
 #scaleBox{
     padding-top: 10px;
     text-align: center;

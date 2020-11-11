@@ -170,7 +170,8 @@ function createChart(scores,times){
                 }, {
                     position: 'right',
                     ticks: {
-                        display: false
+                        display: false,
+                        beginAtZero: true
                     },
                     gridLines: {
                         display: false,
@@ -207,13 +208,6 @@ function updateCharts() {
     var risk_label = getLabel(score);
     var risk_category = getCategory(score);
 
-    if (risk_category == "high") {
-        document.getElementById("riskScale").setAttribute("src", 'img/highRisk.svg');
-    } else if (risk_category == "medium") {
-        document.getElementById("riskScale").setAttribute("src", 'img/medRisk.svg');
-    } else {
-        document.getElementById("riskScale").setAttribute("src", 'img/lowRisk.svg');
-    }
     var advice_area = document.getElementById("advice_by_risk");
     if (advice_area) {
         advice_area.innerHTML = "";
